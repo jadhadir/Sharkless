@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sharkless — Social Media Meets Making Money</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+–black: #080808;
+–white: #f0ede6;
+–teal: #00d4b4;
+–teal-glow: rgba(0,212,180,0.15);
+–amber: #f5a623;
+–gray: #141414;
+–gray2: #222;
+–muted: #666;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+background: var(–black);
+color: var(–white);
+font-family: ‘Instrument Sans’, sans-serif;
+overflow-x: hidden;
+cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+.cursor {
+width: 12px; height: 12px;
+background: var(–teal);
+border-radius: 50%;
+position: fixed; top: 0; left: 0;
+pointer-events: none; z-index: 9999;
+transform: translate(-50%,-50%);
+transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+mix-blend-mode: difference;
+}
+.cursor-ring {
+width: 36px; height: 36px;
+border: 1px solid rgba(0,212,180,0.4);
+border-radius: 50%;
+position: fixed; top: 0; left: 0;
+pointer-events: none; z-index: 9998;
+transform: translate(-50%,-50%);
+transition: transform 0.15s ease-out, width 0.3s, height 0.3s;
+}
+body:hover .cursor { opacity: 1; }
+
+/* ── NOISE OVERLAY ── */
+body::before {
+content: ‘’;
+position: fixed; inset: 0; z-index: 1000;
+pointer-events: none;
+opacity: 0.03;
+background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’/%3E%3C/svg%3E”);
+}
+
+/* ── NAV ── */
+nav {
+position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+padding: 20px 40px;
+display: flex; align-items: center; justify-content: space-between;
+background: linear-gradient(to bottom, rgba(8,8,8,0.9), transparent);
+}
+.logo {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 32px; letter-spacing: 3px;
+color: var(–white);
+}
+.logo span { color: var(–teal); }
+.nav-cta {
+padding: 10px 24px; border-radius: 100px;
+background: transparent; border: 1px solid rgba(255,255,255,0.2);
+color: var(–white); font-family: ‘Instrument Sans’, sans-serif;
+font-size: 13px; font-weight: 600; cursor: none;
+transition: all 0.3s; letter-spacing: 0.5px;
+}
+.nav-cta:hover {
+background: var(–teal); border-color: var(–teal);
+color: var(–black); transform: scale(1.02);
+}
+
+/* ── HERO ── */
+.hero {
+min-height: 100vh;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+text-align: center;
+padding: 120px 24px 80px;
+position: relative; overflow: hidden;
+}
+
+.hero-bg-glow {
+position: absolute;
+width: 600px; height: 600px;
+background: radial-gradient(circle, rgba(0,212,180,0.08) 0%, transparent 70%);
+top: 50%; left: 50%; transform: translate(-50%,-50%);
+pointer-events: none;
+animation: breathe 4s ease-in-out infinite;
+}
+@keyframes breathe {
+0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
+50% { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+}
+
+.hero-bg-grid {
+position: absolute; inset: 0;
+background-image:
+linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+background-size: 60px 60px;
+mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.hero-eyebrow {
+display: inline-flex; align-items: center; gap: 8px;
+background: rgba(0,212,180,0.08);
+border: 1px solid rgba(0,212,180,0.25);
+border-radius: 100px; padding: 6px 16px;
+font-size: 11px; font-weight: 600; letter-spacing: 2px;
+text-transform: uppercase; color: var(–teal);
+margin-bottom: 32px;
+animation: fadeUp 0.8s ease both;
+}
+.live-dot {
+width: 6px; height: 6px; border-radius: 50%;
+background: var(–teal);
+animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+.hero-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(72px, 14vw, 160px);
+line-height: 0.88;
+letter-spacing: 4px;
+margin-bottom: 8px;
+animation: fadeUp 0.8s 0.1s ease both;
+}
+.hero-title .line2 {
+color: var(–teal);
+display: block;
+}
+.hero-title .line3 {
+font-family: ‘Instrument Serif’, serif;
+font-style: italic;
+font-size: clamp(48px, 9vw, 100px);
+color: var(–white);
+opacity: 0.5;
+letter-spacing: 2px;
+}
+
+.hero-sub {
+font-size: clamp(16px, 2.5vw, 20px);
+color: #888;
+max-width: 520px;
+line-height: 1.6;
+margin: 24px auto 48px;
+animation: fadeUp 0.8s 0.2s ease both;
+}
+.hero-sub strong { color: var(–white); font-weight: 500; }
+
+/* ── WAITLIST FORM ── */
+.waitlist-wrap {
+animation: fadeUp 0.8s 0.3s ease both;
+width: 100%; max-width: 480px;
+}
+.waitlist-form {
+display: flex; gap: 0;
+background: var(–gray2);
+border: 1px solid #333;
+border-radius: 16px;
+overflow: hidden;
+transition: border-color 0.3s, box-shadow 0.3s;
+}
+.waitlist-form:focus-within {
+border-color: var(–teal);
+box-shadow: 0 0 0 3px rgba(0,212,180,0.12);
+}
+.waitlist-input {
+flex: 1; padding: 16px 20px;
+background: transparent; border: none;
+color: var(–white); font-family: ‘Instrument Sans’, sans-serif;
+font-size: 15px; outline: none;
+}
+.waitlist-input::placeholder { color: var(–muted); }
+.waitlist-btn {
+padding: 14px 24px; border: none;
+background: var(–teal); color: var(–black);
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 18px; letter-spacing: 1.5px;
+cursor: none; transition: background 0.2s;
+white-space: nowrap;
+}
+.waitlist-btn:hover { background: #00bda0; }
+
+.waitlist-social {
+margin-top: 14px;
+font-size: 12px; color: var(–muted);
+}
+.waitlist-social strong { color: var(–teal); }
+
+.success-msg {
+display: none;
+padding: 16px 24px;
+background: rgba(0,212,180,0.1);
+border: 1px solid rgba(0,212,180,0.3);
+border-radius: 16px;
+font-size: 15px; color: var(–teal);
+text-align: center;
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(24px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SCROLL TICKER ── */
+.ticker-wrap {
+overflow: hidden; border-top: 1px solid #1a1a1a; border-bottom: 1px solid #1a1a1a;
+padding: 14px 0; background: var(–gray);
+}
+.ticker {
+display: flex; gap: 0;
+animation: ticker 20s linear infinite;
+white-space: nowrap;
+}
+.ticker-item {
+padding: 0 48px; font-size: 12px; font-weight: 600;
+text-transform: uppercase; letter-spacing: 2px; color: var(–muted);
+display: flex; align-items: center; gap: 16px;
+}
+.ticker-item span { color: var(–teal); }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── HOW IT WORKS ── */
+.section {
+padding: 100px 24px;
+max-width: 1100px; margin: 0 auto;
+}
+.section-label {
+font-size: 11px; text-transform: uppercase; letter-spacing: 3px;
+color: var(–teal); font-weight: 600; margin-bottom: 16px;
+}
+.section-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(40px, 6vw, 72px);
+letter-spacing: 2px; line-height: 0.95;
+margin-bottom: 64px;
+}
+.section-title em {
+font-family: ‘Instrument Serif’, serif;
+font-style: italic; color: var(–teal);
+}
+
+.steps-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+gap: 2px;
+}
+.step-card {
+background: var(–gray);
+padding: 40px 32px;
+position: relative; overflow: hidden;
+transition: background 0.3s;
+}
+.step-card:first-child { border-radius: 16px 0 0 16px; }
+.step-card:last-child { border-radius: 0 16px 16px 0; }
+.step-card:hover { background: #1a1a1a; }
+.step-card::before {
+content: ‘’;
+position: absolute; top: 0; left: 0; right: 0;
+height: 2px; background: var(–teal);
+transform: scaleX(0); transform-origin: left;
+transition: transform 0.4s ease;
+}
+.step-card:hover::before { transform: scaleX(1); }
+.step-num {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 80px; line-height: 1;
+color: #1f1f1f; margin-bottom: 16px;
+transition: color 0.3s;
+}
+.step-card:hover .step-num { color: #2a2a2a; }
+.step-icon { font-size: 32px; margin-bottom: 16px; }
+.step-title-text { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.step-desc { font-size: 14px; color: #777; line-height: 1.6; }
+
+/* ── FOR WHO ── */
+.for-who {
+padding: 100px 24px;
+background: var(–gray);
+}
+.for-who-inner {
+max-width: 1100px; margin: 0 auto;
+}
+.for-who-grid {
+display: grid; grid-template-columns: 1fr 1fr;
+gap: 24px; margin-top: 48px;
+}
+.for-card {
+border-radius: 20px; padding: 40px;
+position: relative; overflow: hidden;
+}
+.for-card.founders {
+background: linear-gradient(135deg, #0d1f1d, #0a1a18);
+border: 1px solid rgba(0,212,180,0.2);
+}
+.for-card.investors {
+background: linear-gradient(135deg, #1f1a0d, #1a150a);
+border: 1px solid rgba(245,166,35,0.2);
+}
+.for-card-tag {
+display: inline-block; padding: 4px 12px; border-radius: 100px;
+font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+text-transform: uppercase; margin-bottom: 20px;
+}
+.founders .for-card-tag { background: rgba(0,212,180,0.15); color: var(–teal); }
+.investors .for-card-tag { background: rgba(245,166,35,0.15); color: var(–amber); }
+.for-card-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 36px; letter-spacing: 2px; margin-bottom: 16px;
+}
+.for-card-desc { font-size: 15px; color: #999; line-height: 1.7; margin-bottom: 24px; }
+.for-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.for-list li {
+display: flex; align-items: flex-start; gap: 10px;
+font-size: 14px; color: #bbb;
+}
+.for-list li::before {
+content: ‘→’; flex-shrink: 0;
+font-weight: 700; margin-top: 1px;
+}
+.founders .for-list li::before { color: var(–teal); }
+.investors .for-list li::before { color: var(–amber); }
+
+/* ── PROTECTION ── */
+.protection-section {
+padding: 100px 24px;
+max-width: 1100px; margin: 0 auto;
+}
+.protection-grid {
+display: grid; grid-template-columns: repeat(3, 1fr);
+gap: 16px; margin-top: 48px;
+}
+.protection-card {
+background: var(–gray); border-radius: 16px;
+padding: 28px; border: 1px solid #1e1e1e;
+transition: border-color 0.3s, transform 0.3s;
+}
+.protection-card:hover { border-color: rgba(0,212,180,0.3); transform: translateY(-4px); }
+.prot-icon { font-size: 28px; margin-bottom: 16px; }
+.prot-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.prot-desc { font-size: 13px; color: #666; line-height: 1.6; }
+
+/* ── DEAL TYPES ── */
+.deals-section {
+padding: 100px 24px;
+background: var(–gray);
+}
+.deals-inner { max-width: 1100px; margin: 0 auto; }
+.deals-grid {
+display: grid; grid-template-columns: repeat(3,1fr);
+gap: 16px; margin-top: 48px;
+}
+.deal-card {
+border-radius: 20px; padding: 36px 28px;
+border: 1px solid #2a2a2a; background: var(–black);
+position: relative; transition: all 0.3s;
+}
+.deal-card:hover { transform: translateY(-4px); }
+.deal-card.featured {
+border-color: var(–teal);
+background: linear-gradient(135deg, #060f0d, #080808);
+}
+.featured-tag {
+position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+background: var(–teal); color: var(–black);
+font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+text-transform: uppercase; padding: 4px 12px; border-radius: 100px;
+}
+.deal-icon { font-size: 36px; margin-bottom: 20px; }
+.deal-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 8px; }
+.deal-sub { font-size: 13px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+.deal-who {
+display: inline-block; padding: 4px 12px; border-radius: 100px;
+font-size: 11px; font-weight: 600; letter-spacing: 1px;
+text-transform: uppercase;
+}
+.deal-card.featured .deal-who { background: rgba(0,212,180,0.15); color: var(–teal); }
+.deal-card:not(.featured) .deal-who { background: #1e1e1e; color: #666; }
+
+/* ── FINAL CTA ── */
+.final-cta {
+padding: 120px 24px;
+text-align: center; position: relative; overflow: hidden;
+}
+.final-cta::before {
+content: ‘’;
+position: absolute; top: 50%; left: 50%;
+transform: translate(-50%,-50%);
+width: 800px; height: 400px;
+background: radial-gradient(ellipse, rgba(0,212,180,0.06) 0%, transparent 70%);
+pointer-events: none;
+}
+.final-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: clamp(56px, 10vw, 120px);
+letter-spacing: 3px; line-height: 0.9;
+margin-bottom: 24px;
+}
+.final-title .teal { color: var(–teal); }
+.final-sub { font-size: 18px; color: #666; margin-bottom: 48px; }
+.final-form {
+max-width: 480px; margin: 0 auto;
+}
+
+/* ── FOOTER ── */
+footer {
+padding: 32px 40px;
+border-top: 1px solid #141414;
+display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 24px; letter-spacing: 3px; color: #333;
+}
+.footer-logo span { color: #444; }
+.footer-copy { font-size: 12px; color: #333; }
+
+@media (max-width: 768px) {
+nav { padding: 16px 20px; }
+.for-who-grid { grid-template-columns: 1fr; }
+.deals-grid { grid-template-columns: 1fr; }
+.protection-grid { grid-template-columns: 1fr; }
+.step-card:first-child { border-radius: 16px 16px 0 0; }
+.step-card:last-child { border-radius: 0 0 16px 16px; }
+footer { flex-direction: column; gap: 8px; text-align: center; }
+body { cursor: auto; }
+.cursor, .cursor-ring { display: none; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+
+<nav>
+  <div class="logo">SHARK<span>LESS</span></div>
+  <button class="nav-cta" onclick="document.getElementById('waitlist-email').focus()">JOIN THE WAITLIST</button>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-bg-grid"></div>
+
+  <div class="hero-eyebrow">
+    <div class="live-dot"></div>
+    Coming Soon · Be First In
+  </div>
+
+  <h1 class="hero-title">
+    SOCIAL MEDIA
+    <span class="line2">MEETS</span>
+    <span class="line3">making money.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Watch <strong>real founders</strong> pitch real ideas. Back the ones you believe in.
+    <strong>Earn real returns.</strong> No banks. No sharks. No gatekeepers.
+  </p>
+
+  <div class="waitlist-wrap">
+    <div class="waitlist-form" id="waitlistForm">
+      <input class="waitlist-input" id="waitlist-email" type="email" placeholder="your@email.com" />
+      <button class="waitlist-btn" onclick="joinWaitlist()">GET EARLY ACCESS</button>
+    </div>
+    <div class="success-msg" id="successMsg">
+      🎉 You're on the list! We'll hit you when Sharkless goes live.
+    </div>
+    <div class="waitlist-social">
+      <strong id="counter">1,247</strong> people already waiting
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item">Back Founders <span>✦</span></div>
+    <div class="ticker-item">Earn Returns <span>✦</span></div>
+    <div class="ticker-item">No Gatekeepers <span>✦</span></div>
+    <div class="ticker-item">Video Pitches <span>✦</span></div>
+    <div class="ticker-item">Community Voting <span>✦</span></div>
+    <div class="ticker-item">Revenue Share <span>✦</span></div>
+    <div class="ticker-item">Start with $50 <span>✦</span></div>
+    <div class="ticker-item">Be a Believer <span>✦</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item">Back Founders <span>✦</span></div>
+    <div class="ticker-item">Earn Returns <span>✦</span></div>
+    <div class="ticker-item">No Gatekeepers <span>✦</span></div>
+    <div class="ticker-item">Video Pitches <span>✦</span></div>
+    <div class="ticker-item">Community Voting <span>✦</span></div>
+    <div class="ticker-item">Revenue Share <span>✦</span></div>
+    <div class="ticker-item">Start with $50 <span>✦</span></div>
+    <div class="ticker-item">Be a Believer <span>✦</span></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+
+<section class="section">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">THREE STEPS.<br><em>That's it.</em></h2>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon">🎥</div>
+      <div class="step-title-text">Watch Video Pitches</div>
+      <div class="step-desc">Founders post short video pitches — real people, real ideas, no suits required. Scroll, watch, vibe with it.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon">🗳️</div>
+      <div class="step-title-text">Community Votes</div>
+      <div class="step-desc">The crowd decides what's hot. Vote up the ideas you believe in. The best pitches rise to the top — no gatekeepers.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon">💸</div>
+      <div class="step-title-text">Invest & Earn</div>
+      <div class="step-desc">Back founders you believe in. Earn revenue share, equity, or note returns. Start with as little as $50.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOR WHO -->
+
+<div class="for-who">
+  <div class="for-who-inner">
+    <div class="section-label">Built For</div>
+    <h2 class="section-title">FOUNDERS.<br><em>Investors.</em><br>BELIEVERS.</h2>
+    <div class="for-who-grid">
+      <div class="for-card founders">
+        <div class="for-card-tag">For Founders</div>
+        <div class="for-card-title">YOUR IDEA DESERVES A SHOT</div>
+        <p class="for-card-desc">You don't need a Harvard MBA or a Silicon Valley network. You need a camera, a great idea, and the drive to make it real.</p>
+        <ul class="for-list">
+          <li>Post your video pitch in minutes</li>
+          <li>Get community validation before investors even see it</li>
+          <li>Your pitch is timestamped and protected from day one</li>
+          <li>Set your own terms — equity, revenue share, or note</li>
+        </ul>
+      </div>
+      <div class="for-card investors">
+        <div class="for-card-tag">For Investors</div>
+        <div class="for-card-title">STOP WATCHING. START WINNING.</div>
+        <p class="for-card-desc">You've been watching Shark Tank thinking "I could've backed that." Now you can. Real returns, starting at $50.</p>
+        <ul class="for-list">
+          <li>Browse video pitches like you browse social media</li>
+          <li>Community hype score tells you what's trending</li>
+          <li>Invest $50 to $25K per deal</li>
+          <li>Track returns right on your dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROTECTION -->
+
+<section class="protection-section">
+  <div class="section-label">Your Ideas Are Safe</div>
+  <h2 class="section-title">BUILT-IN<br><em>Protection.</em></h2>
+  <div class="protection-grid">
+    <div class="protection-card">
+      <div class="prot-icon">⏱️</div>
+      <div class="prot-title">Timestamped Submissions</div>
+      <div class="prot-desc">Every pitch is automatically timestamped the moment it's submitted. You have proof of your idea — always.</div>
+    </div>
+    <div class="protection-card">
+      <div class="prot-icon">🔐</div>
+      <div class="prot-title">Staged Reveal</div>
+      <div class="prot-desc">Show a teaser publicly. Only verified investors see your full pitch — you control who sees what and when.</div>
+    </div>
+    <div class="protection-card">
+      <div class="prot-icon">💧</div>
+      <div class="prot-title">Watermarked Videos</div>
+      <div class="prot-desc">Every viewer's account is tied to the video they watch. Leaks are traceable. Thieves leave fingerprints.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEAL TYPES -->
+
+<div class="deals-section">
+  <div class="deals-inner">
+    <div class="section-label">Deal Structure</div>
+    <h2 class="section-title">YOUR MONEY.<br><em>Your terms.</em></h2>
+    <div class="deals-grid">
+      <div class="deal-card featured">
+        <div class="featured-tag">Most Popular</div>
+        <div class="deal-icon">💚</div>
+        <div class="deal-title">Revenue Share</div>
+        <div class="deal-sub">Earn a percentage of monthly revenue until you hit an agreed return. Simple. Transparent. No equity required.</div>
+        <div class="deal-who">Open to Everyone</div>
+      </div>
+      <div class="deal-card">
+        <div class="deal-icon">📈</div>
+        <div class="deal-title">Equity</div>
+        <div class="deal-sub">Own a piece of the company. Bigger risk, bigger upside. Available to verified investors.</div>
+        <div class="deal-who">Verified Investors</div>
+      </div>
+      <div class="deal-card">
+        <div class="deal-icon">📄</div>
+        <div class="deal-title">Convertible Note</div>
+        <div class="deal-sub">Starts as a loan, converts to equity at the next funding round. The startup world's go-to instrument.</div>
+        <div class="deal-who">Accredited Only</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+
+<section class="final-cta">
+  <h2 class="final-title">NO SHARKS.<br><span class="teal">JUST BELIEVERS.</span></h2>
+  <p class="final-sub">Get early access before we launch.</p>
+  <div class="final-form">
+    <div class="waitlist-form" id="waitlistForm2">
+      <input class="waitlist-input" id="waitlist-email-2" type="email" placeholder="your@email.com" />
+      <button class="waitlist-btn" onclick="joinWaitlist2()">JOIN NOW</button>
+    </div>
+    <div class="success-msg" id="successMsg2">
+      🎉 You're on the list! We'll hit you when Sharkless goes live.
+    </div>
+    <div class="waitlist-social" style="margin-top:14px;">
+      <strong>1,247</strong> people already waiting
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="footer-logo">SHARK<span>LESS</span></div>
+  <div class="footer-copy">© 2025 Sharkless. All rights reserved.</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) *.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('button, a, input').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+    });
+  });
+
+  // Waitlist
+  function joinWaitlist() {
+    const email = document.getElementById('waitlist-email').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('waitlist-email').style.borderColor = '#e84040';
+      setTimeout(() => document.getElementById('waitlist-email').style.borderColor = '', 1000);
+      return;
+    }
+    document.getElementById('waitlistForm').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    bumpCounter();
+  }
+
+  function joinWaitlist2() {
+    const email = document.getElementById('waitlist-email-2').value;
+    if (!email || !email.includes('@')) return;
+    document.getElementById('waitlistForm2').style.display = 'none';
+    document.getElementById('successMsg2').style.display = 'block';
+    bumpCounter();
+  }
+
+  function bumpCounter() {
+    const el = document.getElementById('counter');
+    let count = 1247;
+    const target = 1248;
+    const interval = setInterval(() => {
+      count++;
+      el.textContent = count.toLocaleString();
+      if (count >= target) clearInterval(interval);
+    }, 50);
+  }
+
+  // Intersection observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.style.opacity = '1';
+    });
+  }, { threshold: 0.1 });
+</script>
+
+</body>
+</html>
